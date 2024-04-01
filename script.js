@@ -123,7 +123,7 @@ const renderSongs = (array) => {
         .map((song) => {
             return `
                 <li id="song-${song.id}" class="playlist-song">
-                <button class="playlist-song-info">
+                <button class="playlist-song-info" onclick="playSong${song.id}">
                     <span class="playlist-song-title">${song.title}</span>
                     <span class="playlist-song-artist">${song.artist}</span>
                     <span class="playlist-song-duration">${song.duration}</span>
@@ -149,6 +149,54 @@ playButton.addEventListener("click", () => {
     }
 });
 
+// functionality to pause the song
+const pauseSong = () => {
+    // store current time of the song
+    userData.songCurrentTime = audio.currentTime;
+
+    // removing class of the play button
+    playButton.classList.remove("playing");
+
+    // method from Web Audio API
+    audio.pause();
+};
+
+// adding the event listener of pauseButton
+pauseButton.addEventListener("click", pauseSong);
+
+// to play the next song
+const playNextSong = () => {
+    if (userData?.currentSong === null) {
+        playSong(userData?.songs[0].id);
+    } else {
+        const currentSongIndex = getCurrentSongIndex();
+        const nextSong = userData?.songs[currentSongIndex + 1];
+
+        playSong(nextSong.id);
+    }
+};
+
+nextButton.addEventListener("click", playNextSong);
+
+// to play the previous song on button press
+const playPreviousSong = () => {
+    if (userData?.currentSong === null) return;
+    else {
+        const currentSongIndex = getCurrentSongIndex();
+        const previousSong = userData?.songs[currentSongIndex - 1];
+
+        playSong(previousSong.id);
+    }
+};
+
+previousButton.addEventListener("click", playPreviousSong);
+
+// now rendering all the songs
+renderSongs(userData?.songs);
+
+// utility function to get the song index
+const getCurrentSongIndex = () =>
+    userData?.songs.indexOf(userData?.currentSong);
 
 // utility function to sort the songs array
 const sortSongs = () => {
@@ -166,6 +214,3 @@ const sortSongs = () => {
 
     return userData?.songs;
 };
-
-// now rendering all the songs
-renderSongs(userData?.songs);

@@ -138,8 +138,10 @@ const playSong = (id) => {
     playButton.classList.add("playing");
 
     // starting highlighting and making player display ON
+    // and changing playButton ARIA
     highlightCurrentSong();
     setPlayerDisplay();
+    setPlayButtonAccessibleText();
 
     audio.play();
 };
@@ -216,6 +218,21 @@ const sortSongs = () => {
     return userData?.songs;
 };
 
+// function to shuffle the playlist
+const shuffle = () => {
+    userData?.songs.sort(() => Math.random() - 0.5);
+    userData.currentSong = null;
+    userData.songCurrentTime = 0;
+
+    renderSongs(userData?.songs);
+    pauseSong();
+    setPlayerDisplay();
+    setPlayButtonAccessibleText();
+};
+
+// setting event listerner for the shuffle button
+shuffleButton.addEventListener("click", shuffle);
+
 // function to high light the currently playing song
 const highlightCurrentSong = () => {
     const playlistSongElements = document.querySelectorAll(".playlist-song");
@@ -242,6 +259,20 @@ const setPlayerDisplay = () => {
 
     playingSong.textContent = currentTitle ? currentTitle : "";
     songArtist.textContent = currentArtist ? currentArtist : "";
+};
+
+/**
+ * this is used for accessibility purpose
+ */
+const setPlayButtonAccessibleText = () => {
+    const song = userData?.currentSong || userData?.songs[0];
+
+    // setting an attribute to the play button for
+    // accessibility rich internet application
+    playButton.setAttribute(
+        "aria-label",
+        song?.title ? `Play ${song.title}` : "Play"
+    );
 };
 
 // now rendering all the songs

@@ -137,7 +137,10 @@ const playSong = (id) => {
     userData.currentSong = song;
     playButton.classList.add("playing");
 
+    // starting highlighting and making player display ON
     highlightCurrentSong();
+    setPlayerDisplay();
+
     audio.play();
 };
 
@@ -225,6 +228,20 @@ const highlightCurrentSong = () => {
     });
 
     if (songToHighlight) songToHighlight.setAttribute("aria-current", "true");
+};
+
+/**
+ * setting the player song title and the artist name
+ * on the player display
+ */
+const setPlayerDisplay = () => {
+    const playingSong = document.getElementById("player-song-title");
+    const songArtist = document.getElementById("player-song-artist");
+    const currentTitle = userData?.currentSong?.title;
+    const currentArtist = userData?.currentSong?.artist;
+
+    playingSong.textContent = currentTitle ? currentTitle : "";
+    songArtist.textContent = currentArtist ? currentArtist : "";
 };
 
 // now rendering all the songs

@@ -275,5 +275,50 @@ const setPlayButtonAccessibleText = () => {
     );
 };
 
+/**
+ *
+ * @param {Number} id
+ *
+ * this will delete the song whose id was passed as an argument
+ */
+const deleteSong = (id) => {
+    // may be the currently playing song was removed from playlist
+    if (userData?.currentSong?.id === id) {
+        userData.currentSong = null;
+        userData.songCurrentTime = 0;
+
+        pauseSong();
+        setPlayerDisplay();
+    }
+
+    // otherwise remove that song from playlist and re-render things
+    userData.songs = userData?.songs.filter((song) => song.id !== id);
+    renderSongs(userData?.songs);
+    highlightCurrentSong();
+    setPlayButtonAccessibleText();
+
+    // if all of the songs got removed and give user the ability to reset the playlist
+    // for that purpose we had the global allSongs array
+    if (userData?.songs.length === 0) {
+        const resetButton = document.createElement("button");
+        const resetText = document.createTextNode("Reset Playlist");
+
+        resetButton.id = "reset";
+        resetButton.ariaLabel = "Reset playlist";
+        resetButton.appendChild(resetText);
+        playlistSongs.appendChild(resetButton);
+
+        // just copy that array to the userData songs list
+        // again re-render everything and aria stuff
+        resetButton.addEventListener("click", () => {
+            userData.songs = [...allSongs];
+
+            renderSongs(sortSongs());
+            setPlayButtonAccessibleText();
+            resetButton.remove();
+        });
+    }
+};
+
 // now rendering all the songs
 renderSongs(userData?.songs);
